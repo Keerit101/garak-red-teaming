@@ -1,0 +1,9 @@
+# First scan: one encoding probe against a local Ollama model, to learn the report format.
+run:
+  generations: 1
+  spec:
+    include:
+      - probes.encoding.InjectBase64
+plugins:
+  target_type: ollama
+  target_name: llama3.2
