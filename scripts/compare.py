@@ -1,7 +1,7 @@
 """Put the three scans side by side and correct for one measurement problem.
 
-    python scripts/compare.py                # uses reports/raw/ if present, else reports/evidence/
-    python scripts/compare.py --evidence     # force the committed, cleaned copies in reports/evidence/
+    python scripts/compare.py                # uses reports/raw/ if present, else evidence/logs/
+    python scripts/compare.py --evidence     # force the committed, cleaned copies in evidence/logs/
 
 Reads the saved reports for:
     full_llama3.2        the bare model
@@ -24,7 +24,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 RAW = REPO / "reports" / "raw"
-EVIDENCE = REPO / "reports" / "evidence"
+EVIDENCE = REPO / "evidence" / "logs"
 USE_EVIDENCE = "--evidence" in sys.argv
 BOT_REFUSAL = "Sorry, I can't help with that."
 

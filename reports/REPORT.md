@@ -44,7 +44,7 @@ Subtracting those (script: `scripts/compare.py`), the adjusted jailbreak figure 
 - A sample of 256 prompts per probe, one reply each. I ran each scan once, so I have no direct measure of run-to-run variation. The only repeat I have is the Base64 probe against the bare model, which gave 2 failures in my first scan and 0 in the full scan, so the numbers do move a little between runs.
 - The jailbreak detector is a keyword check and is a weak measure of real harm.
 - garak was not given the chatbot's secret, so it says nothing about whether the secret can be leaked.
-- The full garak logs are committed in compressed form in `reports/evidence/` (local file paths removed; see the README there). Every number in this report can be reproduced from them with `python scripts/compare.py --evidence`.
+- The full garak logs are committed in compressed form in `evidence/logs/` (local file paths removed; see the README there). Every number in this report can be reproduced from them with `python scripts/compare.py --evidence`.
 - My first attempt to run the bot scans crashed partway through (my shell was running low on resources), so I reran them in a separate process. The numbers above come from the complete reruns.
 
 ## Reproduce

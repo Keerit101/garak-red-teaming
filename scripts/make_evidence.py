@@ -6,7 +6,7 @@ The raw logs in reports/raw/ are large (about 10 MB each) and contain the local
 file paths of the computer that ran the scans. This script:
 
   1. replaces the home-folder path with the placeholder <home>,
-  2. gzips each log into reports/evidence/ (these ARE committed),
+  2. gzips each log into evidence/logs/ (these ARE committed),
   3. re-reads the cleaned copy and checks that it gives exactly the same
      pass and fail counts as the raw log, so the evidence still supports the
      numbers in reports/REPORT.md.
@@ -19,7 +19,7 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 RAW = REPO / "reports" / "raw"
-EVIDENCE = REPO / "reports" / "evidence"
+EVIDENCE = REPO / "evidence" / "logs"
 SCANS = ["full_llama3.2", "bot_defenses_off", "bot_defenses_on"]
 KINDS = ["report", "hitlog"]
 NEWLINE = chr(10)

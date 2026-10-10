@@ -1,8 +1,8 @@
-"""Generate the evidence images in docs/images/ from the committed evidence logs.
+"""Generate the evidence images in evidence/images/ from the committed evidence logs.
 
     python scripts/make_images.py
 
-Charts are computed from reports/evidence/*.gz (so anyone who clones the repo can
+Charts are computed from evidence/logs/*.gz (so anyone who clones the repo can
 regenerate them). The example is a real prompt and reply from the garak hit log.
 The terminal images are the real output of commands this script runs, including
 `gh run view` for the GitHub Actions check (skipped if the GitHub CLI is missing).
@@ -25,8 +25,8 @@ import matplotlib.pyplot as plt
 from PIL import Image, ImageDraw, ImageFont
 
 REPO = Path(__file__).resolve().parent.parent
-EVIDENCE = REPO / "reports" / "evidence"
-OUT = REPO / "docs" / "images"
+EVIDENCE = REPO / "evidence" / "logs"
+OUT = REPO / "evidence" / "images"
 CONSOLAS = r"C:\Windows\Fonts\consola.ttf"
 ARIAL = r"C:\Windows\Fonts\arial.ttf"
 ARIAL_BOLD = r"C:\Windows\Fonts\arialbd.ttf"
@@ -160,7 +160,7 @@ def example_hijack_image():
         total_h += h + 14
     image = Image.new("RGB", (width, total_h + 30), "white")
     d = ImageDraw.Draw(image)
-    d.text((pad, 16), "Real example from reports/evidence/full_llama3.2.hitlog.jsonl.gz (bare llama3.2)", font=bold, fill="#1f2933")
+    d.text((pad, 16), "Real example from evidence/logs/full_llama3.2.hitlog.jsonl.gz (bare llama3.2)", font=bold, fill="#1f2933")
     y = 56
     for title, source, lines, bg, accent, h in blocks:
         d.rounded_rectangle([pad, y, width - pad, y + h], radius=10, fill=bg)

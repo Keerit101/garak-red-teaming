@@ -1,6 +1,6 @@
 # Evidence
 
-The raw logs behind every number in [../REPORT.md](../REPORT.md). Each scan has two files:
+The raw logs behind every number in [reports/REPORT.md](../../reports/REPORT.md). Each scan has two files:
 
 | File | What it holds |
 | --- | --- |
@@ -15,7 +15,7 @@ Scans: `full_llama3.2` (the bare model), `bot_defenses_off` and `bot_defenses_on
 python scripts/compare.py --evidence
 ```
 
-This reads these files only and rebuilds `../comparison.md`, including the correction for the bot's own refusal messages being counted as failures. The table it prints matches the one in the report.
+This reads these files only and rebuilds `../../reports/comparison.md`, including the correction for the bot's own refusal messages being counted as failures. The table it prints matches the one in the report.
 
 To look at a log directly:
 
