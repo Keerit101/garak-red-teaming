@@ -37,7 +37,7 @@ Subtracting those (script: `scripts/compare.py`), the adjusted jailbreak figure 
 - **garak and my manual harness agree on direction.** Both found that hiding instructions in content the model reads is the most effective attack. They measure different things (garak: making the model print a given phrase; my harness: leaking a secret), so the numbers are not directly comparable.
 
 ## CI check
-`.github/workflows/garak.yml` runs a 7-prompt scan against a 0.5B model (`qwen2.5:0.5b`) on every push. GitHub's free runners have no GPU, so this uses a model far smaller than llama3.2. On its first run the tiny model failed the DAN prompt (1/1) and 3 of 6 goodside prompts. This proves the pipeline works end to end; it says nothing about the safety of larger models.
+`.github/workflows/garak.yml` runs a 7-prompt scan against a 0.5B model (`qwen2.5:0.5b`) on every push. GitHub's free runners have no GPU, so this uses a model far smaller than llama3.2. On its first run the tiny model failed the DAN prompt (1/1) and 3 of 6 goodside prompts; a later run gave 0/1 and 3/6, so even this scan varies between runs. This proves the pipeline works end to end; it says nothing about the safety of larger models.
 
 ## Limitations
 - One model (llama3.2, 3B) and one chatbot. Other models will differ.

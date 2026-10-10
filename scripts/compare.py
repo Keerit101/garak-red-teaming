@@ -90,8 +90,12 @@ if __name__ == "__main__":
         row.append(f"{adjusted}/{total} ({percent(adjusted, total)})")
         table.append(row)
 
-    for row in table:
-        print(" | ".join(row))
+    # Console view: aligned columns and short probe names. The files below keep the full names.
+    short = [[row[0].split(".")[-1], row[1].split(".")[-1]] + row[2:] for row in table]
+    console_header = ["probe", "detector"] + header[2:]
+    widths = [max(len(r[i]) for r in [console_header] + short) for i in range(len(console_header))]
+    for r in [console_header] + short:
+        print("  ".join(cell.ljust(width) for cell, width in zip(r, widths)).rstrip())
 
     with open(REPO / "reports" / "comparison.csv", "w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
