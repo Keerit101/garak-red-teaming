@@ -20,7 +20,7 @@ This reads these files only and rebuilds `../comparison.md`, including the corre
 To look at a log directly:
 
 ```
-python -c "import gzip,json; [print(json.loads(l)['entry_type']) for l in gzip.open('bot_defenses_on.report.jsonl.gz','rt')]" | sort | uniq -c
+python -c "import gzip,json,collections as c; print(c.Counter(json.loads(l)['entry_type'] for l in gzip.open('bot_defenses_on.report.jsonl.gz','rt',encoding='utf-8')))"
 ```
 
 ## What was changed from the original logs
