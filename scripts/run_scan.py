@@ -61,7 +61,8 @@ def main():
 
     report = RAW_DIR / f"{name}.report.jsonl"
     if result.returncode != 0 or not report.exists():
-        print(log[-1500:])
+        # the log has emoji; a Windows console cannot print them, so replace them
+        print(log[-1500:].encode("ascii", "replace").decode())
         sys.exit(f"garak failed (exit code {result.returncode})")
 
     rows = read_evals(report)

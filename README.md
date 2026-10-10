@@ -1,43 +1,36 @@
-# Project 3 — Automating Red Teaming with garak
+# Automated Red Teaming with garak
 
-## Goal
-Use [garak](https://github.com/NVIDIA/garak), NVIDIA's LLM vulnerability scanner, to automatically probe language models for weaknesses, then automate and report the results.
+Scans a local LLM and my own chatbot with [garak](https://github.com/NVIDIA/garak) (NVIDIA's LLM vulnerability scanner), summarizes the results with my own script, and re-runs a small scan automatically on GitHub after every push.
 
-## How garak works (for the write-up)
-- **Generators**: the model under test (Hugging Face, OpenAI, Ollama, REST endpoint, …)
-- **Probes**: attack prompts grouped by weakness (e.g. `promptinject`, `dan`, `encoding`, `leakreplay`, `malwaregen`, `xss`)
-- **Detectors**: judge whether each response counts as a failure
-- **Reports**: JSONL log + HTML summary for each run
+**Headline result:** on a sample of 256 attacks per type, hidden instructions inside a report hijacked the bare llama3.2 model **45.7%** of the time. Against my [prompt-injection-lab](https://github.com/Keerit101/prompt-injection-lab) chatbot, the same attack worked **39.5%** of the time with no defenses and **30.5%** with all three defenses on; for hidden instructions in a resume the rate dropped from 13.3% to 1.6%. Those defenses were built to protect a secret, not to stop these attacks, and one of them mostly worked by refusing the whole request. See [reports/REPORT.md](reports/REPORT.md) for the full numbers, a measurement problem I found and corrected, and the limits of the experiment.
 
-## Tasks
-1. **Install & first run**
-   ```bash
-   pip install garak
-   python -m garak --list_probes
-   python -m garak --model_type huggingface --model_name gpt2 --probes encoding
-   ```
-2. **Probe suite** (`configs/`): YAML configs for a focused suite (prompt injection, jailbreaks, encoding, data leakage)
-3. **Targets**
-   - A local model via Ollama
-   - The Project 1 app through garak's REST generator, before vs. after defenses
-   - (Stretch) Compare 2–3 models side by side
-4. **Automation** (`scripts/`)
-   - `run_scan.py`: runs a config and saves the report path
-   - `summarize.py`: parses garak JSONL into a pass/fail table per probe (CSV + Markdown)
-   - GitHub Actions workflow: runs a small, fast scan on push/PR (`.github/workflows/garak.yml`)
-5. **Report** (`reports/`): failure rates per probe and model, the most interesting failures, and how this compares to the manual testing in Project 1
+> Scope: every target is a model or app running on my own computer. Nothing external was scanned.
 
-## Deliverables
-- [ ] garak running locally
-- [ ] 2+ YAML configs
-- [ ] Scan of the Project 1 app, before and after defenses
-- [ ] Report parser + summary table
-- [ ] CI workflow
-- [ ] `reports/REPORT.md`
+## What's here
 
-> Check exact CLI flags and generator names with `python -m garak --help`. They change between garak versions.
+| Path | What it does |
+| --- | --- |
+| `configs/first_scan.yaml` | One probe against a local model, to learn garak's report format |
+| `configs/quick.yaml` | Tiny scan (7 prompts) for fast checks |
+| `configs/full.yaml` | 4 probes x 256 prompts against the bare model (about 20 minutes) |
+| `configs/bot.yaml` | The same probes against my chatbot over HTTP |
+| `configs/ci.yaml` | The tiny scan GitHub Actions runs, against a 0.5B model |
+| `scripts/run_scan.py` | Runs a config, keeps the report in this repo, prints a summary |
+| `scripts/summarize.py` | Turns garak's report file into a table (CSV and Markdown) |
+| `scripts/compare.py` | Puts the three scans side by side and corrects a refusal-counting problem |
+| `.github/workflows/garak.yml` | Runs the CI scan on every push and shows the results in the job summary |
+| `reports/` | Summaries and the comparison. Raw garak logs stay in `reports/raw/` (not committed) |
 
-## Schedule (week of Oct 12, 2026)
+[EXPLAINED.md](EXPLAINED.md) explains garak's parts and the questions you may be asked.
 
-- **Thu:** install garak, build YAML configs, scan a local model and the prompt-injection-lab app, write a JSONL report parser
-- **Fri:** GitHub Actions workflow for a small scan on push, finish `reports/REPORT.md`
+## Run it
+
+Needs Python 3.12 and [Ollama](https://ollama.com) with `ollama pull llama3.2`. (Python 3.14 is too new for garak's dependencies.)
+
+```
+python -m venv .venv
+.venv\Scripts\pip install -r requirements.txt
+python scripts/run_scan.py configs/quick.yaml
+```
+
+To scan the chatbot, start it from the prompt-injection-lab repo in another terminal (`python -m app.server`, optionally with `set DEFENSES=input_filter,delimit,output_filter`), then run `python scripts/run_scan.py configs/bot.yaml --tag defenses_off`.
