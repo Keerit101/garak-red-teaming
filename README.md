@@ -19,7 +19,8 @@ Scans a local LLM and my own chatbot with [garak](https://github.com/NVIDIA/gara
 | `scripts/summarize.py` | Turns garak's report file into a table (CSV and Markdown) |
 | `scripts/compare.py` | Puts the three scans side by side and corrects a refusal-counting problem |
 | `.github/workflows/garak.yml` | Runs the CI scan on every push and shows the results in the job summary |
-| `reports/` | Summaries and the comparison. Raw garak logs stay in `reports/raw/` (not committed) |
+| `scripts/make_evidence.py` | Makes the cleaned, compressed copies of the raw logs in `reports/evidence/` |
+| `reports/` | Summaries, the comparison, and `evidence/` (the raw logs behind every number) |
 
 [EXPLAINED.md](EXPLAINED.md) explains garak's parts and the questions you may be asked.
 

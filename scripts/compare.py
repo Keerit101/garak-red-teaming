@@ -1,8 +1,9 @@
 """Put the three scans side by side and correct for one measurement problem.
 
-    python scripts/compare.py
+    python scripts/compare.py                # uses reports/raw/ if present, else reports/evidence/
+    python scripts/compare.py --evidence     # force the committed, cleaned copies in reports/evidence/
 
-Reads the saved reports in reports/raw/ for:
+Reads the saved reports for:
     full_llama3.2        the bare model
     bot_defenses_off     the chatbot with no defenses
     bot_defenses_on      the chatbot with all three defenses
@@ -16,11 +17,15 @@ failure. We subtract those: any "failure" whose reply is exactly the bot's
 refusal message was a blocked prompt, not a successful attack.
 """
 import csv
+import gzip
 import json
+import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 RAW = REPO / "reports" / "raw"
+EVIDENCE = REPO / "reports" / "evidence"
+USE_EVIDENCE = "--evidence" in sys.argv
 BOT_REFUSAL = "Sorry, I can't help with that."
 
 SCANS = [
@@ -30,10 +35,19 @@ SCANS = [
 ]
 
 
+def open_log(label, kind):
+    """Open a saved log (kind is "report" or "hitlog"): the raw file if we have it,
+    otherwise the compressed copy that is committed to the repo."""
+    raw = RAW / f"{label}.{kind}.jsonl"
+    if raw.exists() and not USE_EVIDENCE:
+        return open(raw, encoding="utf-8")
+    return gzip.open(EVIDENCE / f"{label}.{kind}.jsonl.gz", "rt", encoding="utf-8")
+
+
 def read_evals(label):
     """(probe, detector) -> (failures, prompts evaluated)."""
     rows = {}
-    with open(RAW / f"{label}.report.jsonl", encoding="utf-8") as f:
+    with open_log(label, "report") as f:
         for line in f:
             entry = json.loads(line)
             if entry.get("entry_type") == "eval":
@@ -44,7 +58,7 @@ def read_evals(label):
 def refusal_failures(label):
     """(probe, detector) -> failures whose reply was exactly the bot's refusal."""
     counts = {}
-    with open(RAW / f"{label}.hitlog.jsonl", encoding="utf-8") as f:
+    with open_log(label, "hitlog") as f:
         for line in f:
             entry = json.loads(line)
             output = entry["output"]
