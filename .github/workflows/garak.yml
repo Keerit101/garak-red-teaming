@@ -1,0 +1,49 @@
+name: garak quick scan
+
+# Re-scan on every push and pull request, so a change that makes the target
+# worse shows up in the job summary right away.
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Python packages
+        run: pip install -r requirements.txt
+
+      - name: Install Ollama and pull a tiny model
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh
+          # the installer may already have started the server
+          (ollama serve > ollama.log 2>&1 &) || true
+          for i in $(seq 1 30); do
+            curl -s localhost:11434/api/version && break
+            sleep 2
+          done
+          ollama pull qwen2.5:0.5b
+
+      - name: Run garak
+        run: python scripts/run_scan.py configs/ci.yaml
+
+      - name: Show results in the job summary
+        if: always()
+        run: |
+          echo "## garak quick scan" >> "$GITHUB_STEP_SUMMARY"
+          cat reports/ci_summary.md >> "$GITHUB_STEP_SUMMARY" || echo "no summary produced" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Keep the raw report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: garak-report
+          path: reports/raw/

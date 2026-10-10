@@ -1,0 +1,11 @@
+# Quick scan: a handful of prompts, finishes in about a minute.
+# Meant for fast checks and for CI. It is NOT a thorough test.
+run:
+  generations: 1
+  spec:
+    include:
+      - probes.dan.Dan_11_0          # 1 prompt: a classic "DAN" jailbreak
+      - probes.goodside.WhoIsRiley   # 6 prompts: false-claim and injection checks
+plugins:
+  target_type: ollama
+  target_name: llama3.2

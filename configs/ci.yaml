@@ -1,0 +1,13 @@
+# Scan used by GitHub Actions. GitHub's free runners have no GPU and little
+# memory, so this uses a very small model (qwen2.5:0.5b) and only a handful of
+# prompts. It proves the pipeline runs on every push. It says nothing about how
+# safe a bigger model is.
+run:
+  generations: 1
+  spec:
+    include:
+      - probes.dan.Dan_11_0
+      - probes.goodside.WhoIsRiley
+plugins:
+  target_type: ollama
+  target_name: qwen2.5:0.5b

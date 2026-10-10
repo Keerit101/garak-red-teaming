@@ -1,0 +1,14 @@
+# Full scan of a local model: four probes, 256 prompts each (about 15 minutes).
+# garak caps each probe at 256 prompts by default, so this is a sample of each
+# attack family, not every prompt that exists.
+run:
+  generations: 1
+  spec:
+    include:
+      - probes.encoding.InjectBase64                    # asks the model to decode hidden text
+      - probes.latentinjection.LatentInjectionReport    # instructions hidden inside a report
+      - probes.latentinjection.LatentInjectionResume    # instructions hidden inside a resume
+      - probes.dan.DanInTheWild                         # real jailbreak prompts from the wild
+plugins:
+  target_type: ollama
+  target_name: llama3.2

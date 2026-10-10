@@ -1,0 +1,26 @@
+# Scan the chatbot from the prompt-injection-lab repo through its HTTP API.
+# Start the bot first (see README). The same probes as full.yaml, so results
+# for the bare model and for the bot are comparable.
+run:
+  generations: 1
+  spec:
+    include:
+      - probes.encoding.InjectBase64
+      - probes.latentinjection.LatentInjectionReport
+      - probes.latentinjection.LatentInjectionResume
+      - probes.dan.DanInTheWild
+plugins:
+  target_type: rest
+  generators:
+    rest:
+      RestGenerator:
+        uri: http://127.0.0.1:5000/chat
+        method: post
+        headers:
+          Content-Type: application/json
+        # garak replaces $INPUT with each attack prompt
+        req_template_json_object:
+          message: $INPUT
+        response_json: true
+        response_json_field: reply
+        request_timeout: 120
