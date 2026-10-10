@@ -26,7 +26,7 @@ A "failure" in garak means **the attack worked**.
 - **`.github/workflows/garak.yml`**: GitHub Actions installs Ollama and a tiny 0.5B model, runs `configs/ci.yaml` on every push, and posts the table in the job summary. This is continuous testing: every change gets re-scanned automatically.
 
 ## What I found, in one paragraph
-Hidden instructions hijack llama3.2 a lot (45.7% on the report probe). My chatbot's three defenses lowered that (39.5% to 30.5% on the report probe; 13.3% to 1.6% on resume), but they were designed to protect a secret, and the effect on resume is largely because the input filter refused 180 of 256 prompts outright, including ordinary resume-summary requests. I cannot say which defense helped because I only ran "none" and "all three".
+Hidden instructions hijack llama3.2 a lot (45.7% on the report probe). My chatbot's three defenses lowered that (39.5% to 30.5% on the report probe; 13.3% to 1.6% on resume), but they were designed to protect a secret, and the effect on resume is largely because the input filter blocks 180 of 256 of those prompts outright (I checked by running it alone on the saved prompts), including ordinary resume-summary requests. I cannot say which defense helped because I only ran "none" and "all three".
 
 ## Questions you may be asked
 1. **What does garak do?** Sends many known attack prompts (probes) to a model and uses detectors to mark each reply pass or fail.
