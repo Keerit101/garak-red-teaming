@@ -30,7 +30,13 @@ jobs:
             curl -s localhost:11434/api/version && break
             sleep 2
           done
-          ollama pull qwen2.5:0.5b
+          # the model download occasionally fails with a temporary server error (503), so retry
+          for attempt in 1 2 3; do
+            ollama pull qwen2.5:0.5b && exit 0
+            echo "model download failed (attempt $attempt of 3), retrying in 15 s"
+            sleep 15
+          done
+          exit 1
 
       - name: Run garak
         run: python scripts/run_scan.py configs/ci.yaml
